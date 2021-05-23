@@ -89,5 +89,5 @@ extern "C" void app_main(void)
     // ESP_ERROR_CHECK(i2cdev_init());
     // xTaskCreate(lcd_test, "lcd_test", configMINIMAL_STACK_SIZE * 5, NULL, 5, NULL);
     State state;
-    LPF lpf(12,14,27);
+    LPF lpf(GPIO_NUM_12,GPIO_NUM_14,GPIO_NUM_27);
 }

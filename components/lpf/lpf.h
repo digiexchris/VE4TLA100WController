@@ -5,12 +5,9 @@
 class LPF
 {
 protected:
-    int lpfPins[3];
-    typedef struct LPFSwitches
-    {
-        bool relay[3];
-    } LPFSwitches;
-    std::map<State::Band, LPFSwitches> bandMapping
+    gpio_config_t ioconf;
+    gpio_num_t lpfPins[3];
+    std::map<State::Band, std::array<bool, 3>> bandMap
     {
         {State::Band::b160m, {true, true, true}},
         {State::Band::b80m, {false, false, false}},
@@ -26,5 +23,6 @@ protected:
     };
 
 public:
-    LPF(int pin1, int pin2, int pin3);
+    LPF(gpio_num_t pin1, gpio_num_t pin2, gpio_num_t pin3);
+    esp_err_t setBand(State::Band);
 };
