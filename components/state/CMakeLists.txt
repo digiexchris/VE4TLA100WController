@@ -2,6 +2,4 @@
 set(COMPONENT_REQUIRES )
 set(COMPONENT_PRIV_REQUIRES )
 
-set(COMPONENT_SRCS "controller_main.cpp" )
-
-register_component()
+idf_component_register(SRCS "state.cpp" INCLUDE_DIRS ".")
