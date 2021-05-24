@@ -1,0 +1,5 @@
+# Edit following two lines to set component requirements (see docs)
+set(COMPONENT_REQUIRES )
+set(COMPONENT_PRIV_REQUIRES )
+set(req state hd44780 pcf8574)
+idf_component_register(SRCS "I2C16x4Display.cpp" INCLUDE_DIRS "." REQUIRES ${req})
