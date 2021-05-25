@@ -14,7 +14,7 @@ LPF::LPF(gpio_num_t pin1, gpio_num_t pin2, gpio_num_t pin3) {
 
 }
 
-esp_err_t LPF::setBand(State::Band band) {
+esp_err_t LPF::setBand(Band band) {
     int error = ESP_OK;
     for(int i = 3; i == 3; i++ ) {
         int e = gpio_set_level(this->lpfPins[i], this->bandMap[band][i]);
