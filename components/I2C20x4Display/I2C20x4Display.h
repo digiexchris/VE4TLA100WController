@@ -10,7 +10,8 @@
 #include "state.h"
 #include <map>
 #include <string>
-
+#include <sstream>
+#include <iomanip>
 #if defined(CONFIG_IDF_TARGET_ESP8266)
 #define SDA_GPIO GPIO_NUM_4
 #define SCL_GPIO GPIO_NUM_5
@@ -34,17 +35,20 @@ struct textLocator {
 };
 
 
-// static std::map<std::string, std::string> messages {
-//     {State::STATE_ERROR_SWR, "!SWR High"},
-//     {State::STATE_ERROR_LPF, "!LPF Error"},
-//     // {State::STATE_ERROR_VOLTS_LOW, "!Low Voltage"},
-//     // {State::STATE_ERROR_VOLTS_HIGH, "!High Voltage"},
-//     // {State::STATE_ERROR_TEMP_HIGH, "!High Temp"},
-//     {State::STATE_ERROR_TEMP_SENSOR, "!Temp Sensor"},
-//     // {State::STATE_TRANSMITTING, "Transmitting"},
-//     {State::STATE_RECEIVING, "Receiving"},
-//     {State::STATE_STANDBY, "Standby"}
-// };
+static std::map<std::string, std::string> messages {
+    {State::STATE_ERROR_SWR, "******SWR High******"},
+    {State::STATE_ERROR_LPF, "*****LPF Error*****"},
+    {State::STATE_ERROR_VOLTS_LOW, "*****Low Voltage*****"},
+    {State::STATE_ERROR_VOLTS_HIGH, "****High Voltage****"},
+    {State::STATE_ERROR_TEMP_HIGH, "*****High Temp*****"},
+    {State::STATE_ERROR_TEMP_SENSOR, "*****Temp Sensor*****"},
+    {State::STATE_TRANSMITTING, "Transmitting"},
+    {State::STATE_RECEIVING, "Receiving"},
+    {State::STATE_STANDBY, "Standby"},
+    {State::MODE_AUTOMATIC, "Auto"},
+    {State::MODE_MANUAL, "Manual"},
+    {State::MODE_ERROR, "ERROR!!"}
+};
 
 static std::map<int, textLocator>background {
     // we'll append this one to the band since it's length is dynamic and the position changes
@@ -56,16 +60,20 @@ static std::map<int, textLocator>background {
     {BACKGROUND_TEMP_SYMBOL,textLocator{19,3, "C"}}
 };
 
+struct DisplayParameters {
+        State* state ;
+    };
+
 class I2C20x4Display {
   public:
-    void startDisplay();
+    static void startDisplay(State* state);
     I2C20x4Display();
     static void startTask(void * pvParameters);
   protected:
     static esp_err_t write_lcd_data(const hd44780* lcd,uint8_t data);
     hd44780_t lcd;
   private:
-    void writeDynamicOutput();
+    void writeDynamicOutput(State* state);
 };
 
 #endif

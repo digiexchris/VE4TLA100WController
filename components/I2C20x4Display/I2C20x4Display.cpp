@@ -14,6 +14,8 @@ esp_err_t I2C20x4Display::write_lcd_data(const hd44780* lcd, uint8_t data)
 void I2C20x4Display::startTask(void * pvParameters)
 {
 
+    DisplayParameters* displayParameters = (DisplayParameters*)pvParameters;
+    State* state = displayParameters->state;
     //Initialize the display
     I2C20x4Display display;
 
@@ -54,25 +56,40 @@ void I2C20x4Display::startTask(void * pvParameters)
     }
 
     //Start the loop of updating the display
-    display.writeDynamicOutput();
+    display.writeDynamicOutput(state);
 }
 
-void I2C20x4Display::writeDynamicOutput() {
+void I2C20x4Display::writeDynamicOutput(State* state) {
+
+    
 
     while (1) {
 
         //TODO: get stateData from State and format it to the correct 
         //decimals and spacing
 
+        StateData fullState = state->getFullState();
+
+        std::ostringstream band, mode, power, swr, current, voltage, temp;
+
+        band << std::setw(3) << fullState.band;
+        mode << std::setw(6) << fullState.mode;
+        power << std::setw(5) << std::fixed << std::setprecision(2) << fullState.power;
+        swr << std::setw(4) << std::fixed << std::setprecision(2) << fullState.swr;
+        current << std::setw(5) << std::fixed << std::setprecision(2) << fullState.current;
+        voltage << std::setw(4) << std::fixed << std::setprecision(2) << fullState.voltage;
+        temp << std::setw(4) << std::fixed << std::setprecision(2) << fullState.temp;
+        
+
         std::map<std::string,textLocator> stateData {
-            {"BAND",textLocator{3,0," 80"}},
-            {"FREQUENCY",textLocator{14,0,"Manual"}},
-            {"POWER",textLocator{0,1,"100.00"}},
-            {"SWR",textLocator{16,1,"1.99"}},
-            {"CURRENT",textLocator{1,2,"20.55"}},
-            {"VOLTAGE",textLocator{14,2,"50.77"}},
-            {"STATUS",textLocator{0,3,"Receiving"}},
-            {"TEMP",textLocator{14,3,"32.18"}}
+            {"BAND",textLocator{3,0,band.str()}},
+            {"FREQUENCY",textLocator{14,0,mode.str()}},
+            {"POWER",textLocator{0,1,power.str()}},
+            {"SWR",textLocator{16,1,swr.str()}},
+            {"CURRENT",textLocator{1,2,current.str()}},
+            {"VOLTAGE",textLocator{14,2,voltage.str()}},
+            {"STATUS",textLocator{0,3,messages[fullState.status]}},
+            {"TEMP",textLocator{14,3,temp.str()}}
         };
 
         std::map<std::string, textLocator>::iterator it = stateData.begin();
@@ -88,8 +105,10 @@ void I2C20x4Display::writeDynamicOutput() {
     }
 }
 
-void I2C20x4Display::startDisplay() {
-    static uint8_t ucParameterToPass;
+void I2C20x4Display::startDisplay(State* state) {
+    DisplayParameters ucParameterToPass{
+        state
+    };
     TaskHandle_t xHandle = NULL;
     ESP_ERROR_CHECK(i2cdev_init());
     xTaskCreate(startTask, "lcd_test", configMINIMAL_STACK_SIZE * 5, &ucParameterToPass, 5, &xHandle);
