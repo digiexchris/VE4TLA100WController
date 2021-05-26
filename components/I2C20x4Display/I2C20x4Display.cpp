@@ -22,13 +22,13 @@ void I2C20x4Display::startTask(void * pvParameters)
     display.lcd = hd44780_t{
         .write_cb = write_lcd_data, // use callback to send data to LCD by I2C GPIO expander
         .pins = {
-            .rs = 0,
-            .e  = 2,
-            .d4 = 4,
-            .d5 = 5,
-            .d6 = 6,
-            .d7 = 7,
-            .bl = 3
+            0,
+            2,
+            4,
+            5,
+            6,
+            7,
+            3
         },
         .font = HD44780_FONT_5X8,
         .lines = 4,
