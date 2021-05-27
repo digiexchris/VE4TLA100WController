@@ -60,10 +60,6 @@ static std::map<int, textLocator>background {
     {BACKGROUND_TEMP_SYMBOL,textLocator{19,3, "C"}}
 };
 
-struct DisplayParameters {
-        State* state ;
-    };
-
 class I2C20x4Display {
   public:
     static void startDisplay(State* state);
