@@ -1,23 +1,26 @@
 #ifndef DISPLAY_H
 #define DISPLAY_H
 
-#include "state.h"
+#include "StateController.h"
 #include <hd44780.h>
 #include <pcf8574.h>
 #include <sys/time.h>
 #include <stdio.h>
 #include <cstring>
-#include "state.h"
 #include <map>
 #include <string>
 #include <sstream>
 #include <iomanip>
+#include <freertos/FreeRTOS.h>
+#include <freertos/task.h>
+
+
 #if defined(CONFIG_IDF_TARGET_ESP8266)
 #define SDA_GPIO GPIO_NUM_4
 #define SCL_GPIO GPIO_NUM_5
 #else
-#define SDA_GPIO GPIO_NUM_16
-#define SCL_GPIO GPIO_NUM_17
+#define SDA_GPIO LCD_SDA
+#define SCL_GPIO LCD_SCL
 #endif
 #define I2C_ADDR 0x27
 
@@ -35,19 +38,20 @@ struct textLocator {
 };
 
 
-static std::map<std::string, std::string> messages {
-    {State::STATE_ERROR_SWR, "******SWR High******"},
-    {State::STATE_ERROR_LPF, "*****LPF Error*****"},
-    {State::STATE_ERROR_VOLTS_LOW, "*****Low Voltage*****"},
-    {State::STATE_ERROR_VOLTS_HIGH, "****High Voltage****"},
-    {State::STATE_ERROR_TEMP_HIGH, "*****High Temp*****"},
-    {State::STATE_ERROR_TEMP_SENSOR, "*****Temp Sensor*****"},
-    {State::STATE_TRANSMITTING, "Transmitting"},
-    {State::STATE_RECEIVING, "Receiving"},
-    {State::STATE_STANDBY, "Standby"},
-    {State::MODE_AUTOMATIC, "Auto"},
-    {State::MODE_MANUAL, "Manual"},
-    {State::MODE_ERROR, "ERROR!!"}
+static std::map<std::string, std::string> displayMessages {
+    {StateController::STATE_ERROR_SWR, "******SWR High******"},
+    {StateController::STATE_ERROR_LPF, "*****LPF Error*****"},
+    {StateController::STATE_ERROR_VOLTS_LOW, "*****Low Voltage*****"},
+    {StateController::STATE_ERROR_VOLTS_HIGH, "****High Voltage****"},
+    {StateController::STATE_ERROR_TEMP_HIGH, "*****High Temp*****"},
+    {StateController::STATE_ERROR_TEMP_SENSOR, "*****Temp Sensor*****"},
+    {StateController::STATE_ERROR_CURRENT_HIGH, "***CURRENT HIGH***"},
+    {StateController::STATE_TRANSMITTING, "Transmitting"},
+    {StateController::STATE_RECEIVING, "Receiving"},
+    {StateController::STATE_STANDBY, "Standby"},
+    {StateController::MODE_AUTOMATIC, "Auto"},
+    {StateController::MODE_MANUAL, "Manual"},
+    {StateController::MODE_ERROR, "ERROR!!"}
 };
 
 static std::map<int, textLocator>background {
@@ -62,14 +66,15 @@ static std::map<int, textLocator>background {
 
 class I2C20x4Display {
   public:
-    static void startDisplay(State* state);
     I2C20x4Display();
-    static void startTask(void * pvParameters);
+    static void startDisplay(void * state);
+    static const constexpr int STATUS_INDEX = 0;
+    static const constexpr int MODE_INDEX = 1;
   protected:
     static esp_err_t write_lcd_data(const hd44780* lcd,uint8_t data);
     hd44780_t lcd;
   private:
-    void writeDynamicOutput(State* state);
+    void writeDynamicOutput();
 };
 
 #endif

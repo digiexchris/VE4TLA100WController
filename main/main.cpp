@@ -1,56 +1,31 @@
-/* C++ exception handling example
+#include <freertos/FreeRTOS.h>
+#include <freertos/task.h>
 
-   This example code is in the Public Domain (or CC0 licensed, at your option.)
+//#include <i2cdev.h>
+#include "sdkconfig.h"
+#include "StateController.h"
+#include "lpf.h"
+#include "I2C20x4Display.h"
+#include "pins.h"
 
-   Unless required by applicable law or agreed to in writing, this
-   software is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-   CONDITIONS OF ANY KIND, either express or implied.
-*/
+TaskHandle_t controllerHandle = NULL, displayHandle = NULL, lpfHandle = NULL;
 
-#include <iostream>
-
-using std::cout;
-using std::endl;
-using std::runtime_error;
-
-/* A simple class which may throw an exception from constructor */
-class Throwing
-{
-public:
-    Throwing(int arg)
-    : m_arg(arg)
-    {
-        cout << "In constructor, arg=" << arg << endl;
-        if (arg == 0) {
-            throw runtime_error("Exception in constructor");
-        }
-    }
-
-    ~Throwing()
-    {
-        cout << "In destructor, m_arg=" << m_arg << endl;
-    }
-
-protected:
-    int m_arg;
-};
-
-/* Inside .cpp file, app_main function must be declared with C linkage */
 extern "C" void app_main(void)
 {
-    cout << "app_main starting" << endl;
 
-    try {
-        /* This will succeed */
-        Throwing obj1(42);
+    printf("Starting LPF\n");
+    //LPF lpf(LPF_3,LPF_2,LPF_1);
 
-        /* This will throw an exception */
-        Throwing obj2(0);
 
-        cout << "This will not be printed" << endl;
-    } catch (const runtime_error &e) {
-        cout << "Exception caught: " << e.what() << endl;
-    }
+    StateController::setup();
+    printf("Starting main state control\n");
+    xTaskCreate(StateController::startSafetyMonitor, "StateController", configMINIMAL_STACK_SIZE * 10, NULL, 5, &controllerHandle);
 
-    cout << "app_main done" << endl;
+
+    printf("Starting display\n");
+    ESP_ERROR_CHECK(i2cdev_init());
+    xTaskCreate(I2C20x4Display::startDisplay, "Display", configMINIMAL_STACK_SIZE * 10, NULL, 5, &displayHandle);
+    printf("TESTING4\n");
+
+    vTaskStartScheduler();
 }
