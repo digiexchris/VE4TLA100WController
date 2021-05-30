@@ -4,9 +4,17 @@
 #include <driver/gpio.h>
 #include <freertos/FreeRTOS.h>
 #include <freertos/task.h>
+#include "I2C20x4Display.h"
+
 #include "pins.h"
 
+using namespace std;
+
+static TaskHandle_t stateControllerHandle = NULL;
+
+
 enum Band { b160m, b80m, b60m, b40m, b30m, b20m, b17m, b15m, b12m, b10m, b6m };
+const string BandToString(Band v);
 
 struct StateData {
     double voltage;
@@ -15,27 +23,14 @@ struct StateData {
     double swr;
     double temp;
     Band band;
-    std::string status;
-    std::string mode;
+    const char* status;
+    const char* mode;
 };
 
 class StateController {
     protected:
         static StateData stateData;
-    public: 
-        static const char* STATE_ERROR_SWR;
-        static const char* STATE_ERROR_LPF;
-        static const char* STATE_ERROR_VOLTS_LOW;
-        static const char* STATE_ERROR_VOLTS_HIGH;
-        static const char* STATE_ERROR_TEMP_HIGH;
-        static const char* STATE_ERROR_TEMP_SENSOR;
-        static const char* STATE_ERROR_CURRENT_HIGH;
-        static const char* STATE_TRANSMITTING;
-        static const char* STATE_RECEIVING;
-        static const char* STATE_STANDBY;
-        static const char* MODE_MANUAL;
-        static const char* MODE_AUTOMATIC;
-        static const char* MODE_ERROR;
+    public:
 
         static const double VOLTAGE_MAX;
 

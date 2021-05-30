@@ -1,6 +1,7 @@
 #ifndef DISPLAY_H
 #define DISPLAY_H
 
+#include "pins.h"
 #include "StateController.h"
 #include <hd44780.h>
 #include <pcf8574.h>
@@ -13,6 +14,7 @@
 #include <iomanip>
 #include <freertos/FreeRTOS.h>
 #include <freertos/task.h>
+using namespace std; 
 
 
 #if defined(CONFIG_IDF_TARGET_ESP8266)
@@ -37,25 +39,9 @@ struct textLocator {
   std::string text;
 };
 
-
-static std::map<std::string, std::string> displayMessages {
-    {StateController::STATE_ERROR_SWR, "******SWR High******"},
-    {StateController::STATE_ERROR_LPF, "*****LPF Error*****"},
-    {StateController::STATE_ERROR_VOLTS_LOW, "*****Low Voltage*****"},
-    {StateController::STATE_ERROR_VOLTS_HIGH, "****High Voltage****"},
-    {StateController::STATE_ERROR_TEMP_HIGH, "*****High Temp*****"},
-    {StateController::STATE_ERROR_TEMP_SENSOR, "*****Temp Sensor*****"},
-    {StateController::STATE_ERROR_CURRENT_HIGH, "***CURRENT HIGH***"},
-    {StateController::STATE_TRANSMITTING, "Transmitting"},
-    {StateController::STATE_RECEIVING, "Receiving"},
-    {StateController::STATE_STANDBY, "Standby"},
-    {StateController::MODE_AUTOMATIC, "Auto"},
-    {StateController::MODE_MANUAL, "Manual"},
-    {StateController::MODE_ERROR, "ERROR!!"}
-};
+static TaskHandle_t displayHandle = NULL;;
 
 static std::map<int, textLocator>background {
-    // we'll append this one to the band since it's length is dynamic and the position changes
     {BACKGROUND_BAND_SYMBOL,textLocator{6,0, "m"}},
     {BACKGROUND_WATT_SYMBOL,textLocator{6,1, "W"}},
     {BACKGROUND_SWR_SYMBOL,textLocator{12,1, "SWR"}},
@@ -75,6 +61,7 @@ class I2C20x4Display {
     hd44780_t lcd;
   private:
     void writeDynamicOutput();
+    std::string rightAlignWidth(int columns, string input);
 };
 
 #endif

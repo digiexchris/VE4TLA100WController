@@ -1,14 +1,8 @@
-#include <freertos/FreeRTOS.h>
-#include <freertos/task.h>
+#include "main.h"
 
-//#include <i2cdev.h>
-#include "sdkconfig.h"
-#include "StateController.h"
-#include "lpf.h"
-#include "I2C20x4Display.h"
-#include "pins.h"
+#include <iostream>
 
-TaskHandle_t controllerHandle = NULL, displayHandle = NULL, lpfHandle = NULL;
+// TaskHandle_t controllerHandle = NULL, displayHandle = NULL, lpfHandle = NULL;
 
 extern "C" void app_main(void)
 {
@@ -19,13 +13,18 @@ extern "C" void app_main(void)
 
     StateController::setup();
     printf("Starting main state control\n");
-    xTaskCreate(StateController::startSafetyMonitor, "StateController", configMINIMAL_STACK_SIZE * 10, NULL, 5, &controllerHandle);
-
+    auto err = xTaskCreate(StateController::startSafetyMonitor, "StateController", 4024, NULL, 5, &stateControllerHandle);
 
     printf("Starting display\n");
     ESP_ERROR_CHECK(i2cdev_init());
-    xTaskCreate(I2C20x4Display::startDisplay, "Display", configMINIMAL_STACK_SIZE * 10, NULL, 5, &displayHandle);
+    auto err2 = xTaskCreate(I2C20x4Display::startDisplay, "Display", 4024, NULL, 5, &displayHandle);
     printf("TESTING4\n");
+    vTaskDelete(NULL);
 
-    vTaskStartScheduler();
+    // while(1) {
+
+    //     std::cout << "TESTING" << std::endl;
+    //     vTaskDelay(500 / portTICK_PERIOD_MS);
+    // }
+    //vTaskStartScheduler();
 }

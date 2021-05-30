@@ -1,4 +1,21 @@
 #include "I2C20x4Display.h"
+#include "messages.h"
+
+static std::map<std::string, std::string> displayMessages {
+    {STATE_ERROR_SWR, "******SWR High******"},
+    {STATE_ERROR_LPF, "*****LPF Error*****"},
+    {STATE_ERROR_VOLTS_LOW, "*****Low Voltage*****"},
+    {STATE_ERROR_VOLTS_HIGH, "****High Voltage****"},
+    {STATE_ERROR_TEMP_HIGH, "*****High Temp*****"},
+    {STATE_ERROR_TEMP_SENSOR, "*****Temp Sensor*****"},
+    {STATE_ERROR_CURRENT_HIGH, "***CURRENT HIGH***"},
+    {STATE_TRANSMITTING, "Transmitting"},
+    {STATE_RECEIVING, "Receiving"},
+    {STATE_STANDBY, "Standby"},
+    {MODE_AUTOMATIC, "Auto"},
+    {MODE_MANUAL, "Manual"},
+    {MODE_ERROR, "ERROR!!"}
+};
 
 using namespace std;
 
@@ -13,8 +30,10 @@ esp_err_t I2C20x4Display::write_lcd_data(const hd44780* lcd, uint8_t data)
     return pcf8574_port_write(&pcf8574, data);
 }
 
-void I2C20x4Display::startDisplay(void * params)
+#include <iostream>
+void I2C20x4Display:: startDisplay(void * params)
 {
+    std::cout << "started Display" << std::endl;
     //Initialize the display
     I2C20x4Display display;
 
@@ -39,7 +58,7 @@ void I2C20x4Display::startDisplay(void * params)
 
     ESP_ERROR_CHECK(hd44780_init(&display.lcd));
 
-    hd44780_switch_backlight(&display.lcd, true);
+    ESP_ERROR_CHECK(hd44780_switch_backlight(&display.lcd, true));
 
     //Write out the static background
     std::map<int, textLocator>::iterator it = background.begin();
@@ -56,40 +75,47 @@ void I2C20x4Display::startDisplay(void * params)
 
     // Start the loop of updating the display
     display.writeDynamicOutput();
+
+    vTaskDelete(NULL);
 }
 
 void I2C20x4Display::writeDynamicOutput() {
     
-    std::ostringstream band, mode, power, swr, current, voltage, temp;
+    std::string band, mode, power, swr, current, voltage, temp, status;
     
     while (1) {
-        //block to wait for a notification that it should update
-        xTaskNotifyWait( 0x00,      /* Don't clear any notification bits on entry. */
-                            ULONG_MAX, /* Reset the notification value to 0 on exit. */
-                            NULL, /* Notified value pass out in
-                                                    ulNotifiedValue. */
-                            portMAX_DELAY );  /* Block forever until a notification comes in*/
 
-        
+        vTaskDelay(500/portTICK_PERIOD_MS);
+        //block to wait for a notification that it should update
+        // xTaskNotifyWait( 0x00,      /* Don't clear any notification bits on entry. */
+        //                     ULONG_MAX, /* Reset the notification value to 0 on exit. */
+        //                     NULL, /* Notified value pass out in
+        //                                             ulNotifiedValue. */
+        //                     portMAX_DELAY );  /* Block forever until a notification comes in*/
         auto state = StateController::getFullState();
-        band << std::setw(3) << state.band;
-        mode << std::setw(6) << state.mode;
-        power << std::setw(5) << std::fixed << std::setprecision(2) << state.power;
-        swr << std::setw(4) << std::fixed << std::setprecision(2) << state.swr;
-        current << std::setw(5) << std::fixed << std::setprecision(2) << state.current;
-        voltage << std::setw(4) << std::fixed << std::setprecision(2) << state.voltage;
-        temp << std::setw(4) << std::fixed << std::setprecision(2) << state.temp;
+
+        band = BandToString(state.band);
         
+        band = rightAlignWidth(4, band.substr(1));
+        mode = rightAlignWidth(10,string(state.mode));
+        power = rightAlignWidth(6,to_string(state.power));
+        swr = rightAlignWidth(4,to_string(state.swr));
+        current = rightAlignWidth(5,to_string(state.current));
+        voltage = rightAlignWidth(5,to_string(state.voltage));
+        temp = rightAlignWidth(2,to_string(state.temp));
+        status = rightAlignWidth(12,string(state.status));
+
+        std::string statusMsg = displayMessages[state.status];
 
         std::map<std::string,textLocator> stateData {
-            {"BAND",textLocator{3,0,band.str()}},
-            {"FREQUENCY",textLocator{14,0,mode.str()}},
-            {"POWER",textLocator{0,1,power.str()}},
-            {"SWR",textLocator{16,1,swr.str()}},
-            {"CURRENT",textLocator{1,2,current.str()}},
-            {"VOLTAGE",textLocator{14,2,voltage.str()}},
-            {"STATUS",textLocator{0,3,displayMessages[state.status]}},
-            {"TEMP",textLocator{14,3,temp.str()}}
+            {"BAND",textLocator{3,0,band}},
+            {"FREQUENCY",textLocator{14,0,mode}},
+            {"POWER",textLocator{0,1,power}},
+            {"SWR",textLocator{16,1,swr}},
+            {"CURRENT",textLocator{1,2,current}},
+            {"VOLTAGE",textLocator{14,2,voltage}},
+            {"STATUS",textLocator{0,3,statusMsg}},
+            {"TEMP",textLocator{14,3,temp}}
         };
 
         std::map<std::string, textLocator>::iterator it = stateData.begin();
@@ -102,4 +128,13 @@ void I2C20x4Display::writeDynamicOutput() {
             it++;
         }
     }
+}
+
+string I2C20x4Display::rightAlignWidth(int width, string s) {
+    if(s.length() > width) {
+        return s;
+    }
+    s.insert(s.begin(), width - s.length(), ' ');
+
+    return s;
 }
