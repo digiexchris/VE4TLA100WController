@@ -3,7 +3,7 @@
 # project subdirectory.
 #
 
-PROJECT_NAME := cpp_exceptions_example
+PROJECT_NAME := hello-world
 
 include $(IDF_PATH)/make/project.mk
 

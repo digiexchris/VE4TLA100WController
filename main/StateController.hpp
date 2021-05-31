@@ -4,9 +4,9 @@
 #include <driver/gpio.h>
 #include <freertos/FreeRTOS.h>
 #include <freertos/task.h>
-#include "I2C20x4Display.h"
+#include "Display.hpp"
 
-#include "pins.h"
+#include "pins.hpp"
 
 using namespace std;
 

@@ -1,5 +1,5 @@
-#include "StateController.h"
-#include "messages.h"
+#include "StateController.hpp"
+#include "messages.hpp"
 
 const double StateController::VOLTAGE_MAX = 52.00;
 
@@ -25,11 +25,11 @@ const string BandToString(Band v)
 }
 
 StateData StateController::stateData = {
-		.voltage = 21.33,
-		.current = 19.33,
-		.power = 100.33,
-		.swr = 1.9944,
-		.temp = 32.11,
+		.voltage = 21.33333,
+		.current = 19.33443,
+		.power = 100.3344343,
+		.swr = 1.99443,
+		.temp = 32.11343,
 		.band = Band::b160m,
 		.status = STATE_ERROR_SWR,
 		.mode = MODE_AUTOMATIC

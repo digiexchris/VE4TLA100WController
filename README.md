@@ -1,49 +1,27 @@
-# Example: C++ exception handling
+# VE4TLA Amp Controller
 
-(See the README.md file in the upper level 'examples' directory for more information about examples.)
+This is intended to control the MRF101AN evaluation boards provided by RfPowerTools.com for the MRF101AN LDMOS device. It is designed around the ESP32 and FreeRTOS, and taking advantage of the dual core multi-threading capability of the ESP32 in order to provided dedicated safety features.
 
-This example demonstrates usage of C++ exceptions in ESP-IDF.
+It is likely this could be used for most amplifier control schemes where:
+- the LPF takes BCD input
+- the bias-off signal is a high signal rather than a low signal (though it's easy to invert this)
+- the T/R switch is high for transmit (though it's easy to invert this)
+- the SWR bridge outputs a compatible voltage range (I may make this configurable)
 
-By default, C++ exceptions support is disabled in ESP-IDF. It can be enabled using `CONFIG_COMPILER_CXX_EXCEPTIONS` configuration option.
+Features:
+- DS18B20 i2c temp sensor
+- 20x4 HD44780 style LCD with an i2c backpack
+- High side voltage and current (with a 0.2 ohm resistor and a simple voltage divider)
+- Input from the RFPowerTools T/R switch board for Power and SWR
+- Controlls the RFPowerTools T/R switch board
+- Controls the RFPowerTools low pass filter board
+- Band up/down buttons
+- Standby button
+- Reset button (for resetting an error condition such as high swr)
 
-In this example, the `sdkconfig.defaults` file sets the `CONFIG_COMPILER_CXX_EXCEPTIONS` option. This enables both compile time support (`-fexceptions` compiler flag) and run-time support for C++ exception handling.
+Planned Features:
+- automatic band decoding via rig decoding
+- automatic band decoding using a frequency counter
 
-The example source code declares a class which can throw exception from the constructor if the argument provided is equal to `0`. This is used to demonstrate that exceptions can be thrown and caught using standard C++ facilities.
-
-**Note: Due to the use of the C++ exceptions, this example is written in C++ instead of C.**
-
-## How to use example
-
-### Hardware Required
-
-This example should be able to run on any commonly available ESP32 development board.
-
-### Configure the project
-
-```
-idf.py menuconfig
-```
-
-### Build and Flash
-
-```
-idf.py -p PORT flash monitor
-```
-
-(Replace PORT with the name of the serial port.)
-
-(To exit the serial monitor, type ``Ctrl-]``.)
-
-See the Getting Started Guide for full steps to configure and use ESP-IDF to build projects.
-
-## Example Output
-
-```
-app_main starting
-In constructor, arg=42
-In constructor, arg=0
-In destructor, m_arg=42
-Exception caught: Exception in constructor
-app_main done
-```
+See includes/pins.h for pins that are needed to be connected.
 

@@ -1,5 +1,5 @@
-#include "I2C20x4Display.h"
-#include "messages.h"
+#include "Display.hpp"
+#include "messages.hpp"
 
 static std::map<std::string, std::string> displayMessages {
     {STATE_ERROR_SWR, "******SWR High******"},
@@ -21,21 +21,21 @@ using namespace std;
 
 static i2c_dev_t pcf8574;
 
-I2C20x4Display::I2C20x4Display() {
+Display::Display() {
     
 }
 
-esp_err_t I2C20x4Display::write_lcd_data(const hd44780* lcd, uint8_t data)
+esp_err_t Display::write_lcd_data(const hd44780* lcd, uint8_t data)
 {
     return pcf8574_port_write(&pcf8574, data);
 }
 
 #include <iostream>
-void I2C20x4Display:: startDisplay(void * params)
+void Display:: startDisplay(void * params)
 {
     std::cout << "started Display" << std::endl;
     //Initialize the display
-    I2C20x4Display display;
+    Display display;
 
     display.lcd = hd44780_t{
         .write_cb = write_lcd_data, // use callback to send data to LCD by I2C GPIO expander
@@ -79,7 +79,7 @@ void I2C20x4Display:: startDisplay(void * params)
     vTaskDelete(NULL);
 }
 
-void I2C20x4Display::writeDynamicOutput() {
+void Display::writeDynamicOutput() {
     
     std::string band, mode, power, swr, current, voltage, temp, status;
     
@@ -96,26 +96,25 @@ void I2C20x4Display::writeDynamicOutput() {
 
         band = BandToString(state.band);
         
-        band = rightAlignWidth(4, band.substr(1));
-        mode = rightAlignWidth(10,string(state.mode));
-        power = rightAlignWidth(6,to_string(state.power));
-        swr = rightAlignWidth(4,to_string(state.swr));
-        current = rightAlignWidth(5,to_string(state.current));
-        voltage = rightAlignWidth(5,to_string(state.voltage));
-        temp = rightAlignWidth(2,to_string(state.temp));
-        status = rightAlignWidth(12,string(state.status));
+	    band = rightAlignWidth(4, band);
+        mode = rightAlignWidth(14,string(state.mode));
+        power = leftPadDoubleToStringWithPrecision(6, state.power, 2);
+        swr = leftPadDoubleToStringWithPrecision(4, state.swr, 2);
+        current = leftPadDoubleToStringWithPrecision(5,state.current, 2);
+        voltage = leftPadDoubleToStringWithPrecision(5,state.voltage, 2);
+        temp = rightAlignWidth(2,to_string((int)state.temp));
 
         std::string statusMsg = displayMessages[state.status];
 
         std::map<std::string,textLocator> stateData {
-            {"BAND",textLocator{3,0,band}},
-            {"FREQUENCY",textLocator{14,0,mode}},
+            {"BAND",textLocator{0,0,band}},
+            {"MODE",textLocator{6,0,mode}},
             {"POWER",textLocator{0,1,power}},
             {"SWR",textLocator{16,1,swr}},
-            {"CURRENT",textLocator{1,2,current}},
+            {"CURRENT",textLocator{0,2,current}},
             {"VOLTAGE",textLocator{14,2,voltage}},
             {"STATUS",textLocator{0,3,statusMsg}},
-            {"TEMP",textLocator{14,3,temp}}
+            {"TEMP",textLocator{17,3,temp}}
         };
 
         std::map<std::string, textLocator>::iterator it = stateData.begin();
@@ -130,11 +129,3 @@ void I2C20x4Display::writeDynamicOutput() {
     }
 }
 
-string I2C20x4Display::rightAlignWidth(int width, string s) {
-    if(s.length() > width) {
-        return s;
-    }
-    s.insert(s.begin(), width - s.length(), ' ');
-
-    return s;
-}
