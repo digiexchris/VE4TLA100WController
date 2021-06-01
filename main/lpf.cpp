@@ -1,7 +1,7 @@
 #include "lpf.hpp"
 #include "driver/gpio.h"
 
-static TaskHandle_t lpfHandle = NULL;;
+static TaskHandle_t lpfHandle = NULL;
 
 LPF::LPF(gpio_num_t pin1, gpio_num_t pin2, gpio_num_t pin3) {
     this->lpfPins[0] = pin1;

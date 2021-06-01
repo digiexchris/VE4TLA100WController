@@ -1,2 +1,2 @@
-idf_component_register(SRCS "main.cpp" "StateController.cpp" "Display.cpp" "lpf.cpp" "DisplayFormat.cpp"
+idf_component_register(SRCS "main.cpp" State.cpp "Display.cpp" "lpf.cpp" "DisplayFormat.cpp" Task.cpp  SafetyMonitor.cpp
                     INCLUDE_DIRS "." "../includes")

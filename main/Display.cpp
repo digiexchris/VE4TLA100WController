@@ -85,18 +85,18 @@ void Display::writeDynamicOutput() {
     
     while (1) {
 
-        vTaskDelay(500/portTICK_PERIOD_MS);
-        //block to wait for a notification that it should update
-        // xTaskNotifyWait( 0x00,      /* Don't clear any notification bits on entry. */
-        //                     ULONG_MAX, /* Reset the notification value to 0 on exit. */
-        //                     NULL, /* Notified value pass out in
-        //                                             ulNotifiedValue. */
-        //                     portMAX_DELAY );  /* Block forever until a notification comes in*/
-        auto state = StateController::getFullState();
+        //vTaskDelay(500/portTICK_PERIOD_MS);
+//        block to wait for a notification that it should update
+         xTaskNotifyWait( 0x00,      /* Don't clear any notification bits on entry. */
+                             ULONG_MAX, /* Reset the notification value to 0 on exit. */
+                             NULL, /* Notified value pass out in
+                                                     ulNotifiedValue. */
+                             portMAX_DELAY );  /* Block forever until a notification comes in*/
+        auto state = State::getFullState();
 
         band = BandToString(state.band);
         
-	    band = rightAlignWidth(4, band);
+	    band = rightAlignWidth(3, band);
         mode = rightAlignWidth(14,string(state.mode));
         power = leftPadDoubleToStringWithPrecision(6, state.power, 2);
         swr = leftPadDoubleToStringWithPrecision(4, state.swr, 2);

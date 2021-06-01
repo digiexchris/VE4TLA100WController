@@ -1,8 +1,8 @@
-#ifndef DISPLAY_H
-#define DISPLAY_H
+#pragma once
 
 #include "pins.hpp"
-#include "StateController.hpp"
+#include "State.hpp"
+#include "Task.hpp"
 #include "DisplayFormat.hpp"
 #include <hd44780.h>
 #include <pcf8574.h>
@@ -41,10 +41,8 @@ struct textLocator {
   std::string text;
 };
 
-static TaskHandle_t displayHandle = NULL;;
-
 static std::map<int, textLocator>background {
-    {BACKGROUND_BAND_SYMBOL,textLocator{4,0, "m"}},
+    {BACKGROUND_BAND_SYMBOL,textLocator{3,0, "m"}},
     {BACKGROUND_WATT_SYMBOL,textLocator{6,1, "W"}},
     {BACKGROUND_SWR_SYMBOL,textLocator{12,1, "SWR"}},
     {BACKGROUND_AMP_SYMBOL,textLocator{6,2, "A"}},
@@ -52,7 +50,7 @@ static std::map<int, textLocator>background {
     {BACKGROUND_TEMP_SYMBOL,textLocator{19,3, "C"}}
 };
 
-class Display {
+class Display : public Task {
   public:
     Display();
     static void startDisplay(void * state);
@@ -65,5 +63,3 @@ class Display {
     void writeDynamicOutput();
     double roundUp(double value, int decimal_places);
 };
-
-#endif

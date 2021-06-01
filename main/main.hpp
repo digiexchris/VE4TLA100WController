@@ -1,12 +1,14 @@
 #ifndef MAIN_H
 #define MAIN_H
+#define INCLUDE_xTaskGetHandle 1
 
 #include <freertos/FreeRTOS.h>
 #include <freertos/task.h>
 
 //#include <i2cdev.h>
 #include "sdkconfig.h"
-#include "StateController.hpp"
+#include "State.hpp"
+#include "SafetyMonitor.hpp"
 // #include "lpf.hpp"
 #include "Display.hpp"
 
