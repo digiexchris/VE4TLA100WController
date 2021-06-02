@@ -13,10 +13,13 @@ using namespace std;
 
 
 class SafetyMonitor : public Task {
-    public:
-        static const double VOLTAGE_MAX;
+protected:
+	static TaskHandle_t displayHandle;
+public:
+    static const double VOLTAGE_MAX;
 
-        static void startSafetyMonitor(void* params);
-        static void startVoltageInput(void*);
+    static void startSafetyMonitor(void* params);
+    static void startVoltageInput(void*);
+	static void setup(TaskHandle_t dH);
 	
 };

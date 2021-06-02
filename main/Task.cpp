@@ -2,6 +2,6 @@
 
 TaskHandle_t Task::taskHandle = NULL;
 
-TaskHandle_t* Task::getTaskHandle() {
-	return &taskHandle;
+TaskHandle_t Task::getTaskHandle() {
+	return taskHandle;
 }

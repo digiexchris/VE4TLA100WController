@@ -11,5 +11,6 @@
 #include "SafetyMonitor.hpp"
 // #include "lpf.hpp"
 #include "Display.hpp"
+#include "Voltage.hpp"
 
 #endif

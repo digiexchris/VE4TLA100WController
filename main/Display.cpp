@@ -85,13 +85,14 @@ void Display::writeDynamicOutput() {
     
     while (1) {
 
-        //vTaskDelay(500/portTICK_PERIOD_MS);
+//        vTaskDelay(500/portTICK_PERIOD_MS);
 //        block to wait for a notification that it should update
-         xTaskNotifyWait( 0x00,      /* Don't clear any notification bits on entry. */
-                             ULONG_MAX, /* Reset the notification value to 0 on exit. */
-                             NULL, /* Notified value pass out in
-                                                     ulNotifiedValue. */
-                             portMAX_DELAY );  /* Block forever until a notification comes in*/
+        ulTaskNotifyTake( 
+		    pdTRUE,          /* Clear the notification value 
+		                        before exiting. */
+		    portMAX_DELAY); /* Block indefinitely. */
+	    
+	    cout << "Starting to refresh the screen" << endl;
         auto state = State::getFullState();
 
         band = BandToString(state.band);
@@ -126,6 +127,7 @@ void Display::writeDynamicOutput() {
             hd44780_puts(&lcd,tl.text.c_str());
             it++;
         }
+	    cout << "Screen refresh complete" << endl;
     }
 }
 

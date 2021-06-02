@@ -8,7 +8,7 @@
 #include "messages.hpp"
 
 #include "pins.hpp"
-enum Band { b160m, b80m, b60m, b40m, b30m, b20m, b17m, b15m, b12m, b10m, b6m };
+enum Band : unsigned int { b160m, b80m, b60m, b40m, b30m, b20m, b17m, b15m, b12m, b10m, b6m } ;
 
 struct StateData {
 	double voltage;
@@ -24,8 +24,11 @@ struct StateData {
 class State {
 protected:
 	static StateData stateData;
+	static TaskHandle_t displayHandle;
 public:
+	
 	static StateData getFullState();
-	static void setVoltage(double voltage);
+	static void setVoltage(double v);
+	static void setup(TaskHandle_t dH);
 };
 	

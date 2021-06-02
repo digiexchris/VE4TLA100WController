@@ -12,6 +12,19 @@ StateData State::stateData = {
 	.mode = MODE_MANUAL
 };
 
+TaskHandle_t State::displayHandle = NULL;
+
 StateData State::getFullState() {
 	return stateData;
+}
+
+void State::setup(TaskHandle_t  dH)
+{
+	displayHandle = dH;
+}
+void State::setVoltage(double v)
+{
+	stateData.voltage = v;
+	
+	xTaskNotifyGive(displayHandle);
 }
