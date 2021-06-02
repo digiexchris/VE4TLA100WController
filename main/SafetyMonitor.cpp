@@ -5,18 +5,19 @@ const double SafetyMonitor::VOLTAGE_MAX = 52.00;
 
 volatile bool disableInterrupts = false;
 
-TaskHandle_t SafetyMonitor::displayHandle = NULL;
-
-void SafetyMonitor::setup(TaskHandle_t  dH)
-{
-	displayHandle = dH;
-}
-
 void SafetyMonitor::startSafetyMonitor(void* param) {
+	
+	//block it until main tells it to start
+	ulTaskNotifyTake( 
+	pdTRUE,          /* Clear the notification value 
+						before exiting. */
+			portMAX_DELAY); /* Block indefinitely. */
 	
 	StateData stateData;
 	
 	vTaskDelay(50 / portTICK_PERIOD_MS);
+	
+	bool error = false;
 
 	while(1) {
 		
@@ -30,21 +31,24 @@ void SafetyMonitor::startSafetyMonitor(void* param) {
 		stateData = State::getFullState();
 		
 		if(stateData.voltage > VOLTAGE_MAX) {
-			stateData.status = STATE_ERROR_VOLTS_HIGH;
-			stateData.mode = MODE_ERROR;
+			error = true;
+			State::setMode(MODE_ERROR);
+			State::setStatus(STATE_ERROR_VOLTS_HIGH);
 		} 
 
 		if(stateData.temp > 50.00) {
-			stateData.status = STATE_ERROR_TEMP_HIGH;
-			stateData.mode = MODE_ERROR;
+			error = true;
+			State::setMode(MODE_ERROR);
+			State::setStatus(STATE_ERROR_TEMP_HIGH);
 		}
 
 		if(stateData.current > 5) {
-			stateData.status = STATE_ERROR_CURRENT_HIGH;
-			stateData.mode = MODE_ERROR;
+			error = true;
+			State::setMode(MODE_ERROR);
+			State::setStatus(STATE_ERROR_CURRENT_HIGH);
 		}
 
-		if(stateData.mode == MODE_ERROR) {
+		if(error) {
 			//turn the amp off
 //			 gpio_set_level(PTT_OUTPUT,0);
 //			 gpio_set_level(BIAS_DISABLE,1);
@@ -61,11 +65,11 @@ void SafetyMonitor::startSafetyMonitor(void* param) {
 			//kill all except the display
 			
 			//note: suspendall isn't working, perhaps turn off individual tasks instead.
-			vTaskSuspendAll();
-		
-			vTaskResume(displayHandle);
+			vTaskSuspend(State::getVoltageInputHandle());
 			vTaskDelay(500 / portTICK_PERIOD_MS);
-			xTaskNotifyGive( displayHandle);
+			vTaskSuspend(State::getDisplayHandle());
+			vTaskSuspend(State::getSafetyMonitorHandle());
+			
 		}
 	}
 	vTaskDelete(NULL);

@@ -1,8 +1,12 @@
 #include "Voltage.hpp"
 #include <iostream>
 void Voltage::startVoltageInput(void* param) {
-
-	vTaskDelay(50 / portTICK_PERIOD_MS);
+	
+	//block it until main tells it to start
+	ulTaskNotifyTake( 
+	pdTRUE,          /* Clear the notification value 
+						before exiting. */
+			portMAX_DELAY); /* Block indefinitely. */
 	
 	double voltage = 51.00;
 	

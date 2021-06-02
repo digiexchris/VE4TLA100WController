@@ -2,12 +2,12 @@
 #include "messages.hpp"
 
 static std::map<std::string, std::string> displayMessages {
-    {STATE_ERROR_SWR, "******SWR High******"},
-    {STATE_ERROR_LPF, "*****LPF Error*****"},
-    {STATE_ERROR_VOLTS_LOW, "*****Low Voltage*****"},
-    {STATE_ERROR_VOLTS_HIGH, "****High Voltage****"},
-    {STATE_ERROR_TEMP_HIGH, "*****High Temp*****"},
-    {STATE_ERROR_TEMP_SENSOR, "*****Temp Sensor*****"},
+    {STATE_ERROR_SWR, "**SWR High**"},
+    {STATE_ERROR_LPF, "**LPF Error**"},
+    {STATE_ERROR_VOLTS_LOW, "**Low Voltage**"},
+    {STATE_ERROR_VOLTS_HIGH, "**High Voltage**"},
+    {STATE_ERROR_TEMP_HIGH, "**High Temp**"},
+    {STATE_ERROR_TEMP_SENSOR, "**Temp Sensor**"},
     {STATE_ERROR_CURRENT_HIGH, "***CURRENT HIGH***"},
     {STATE_TRANSMITTING, "Transmitting"},
     {STATE_RECEIVING, "Receiving"},
@@ -33,6 +33,12 @@ esp_err_t Display::write_lcd_data(const hd44780* lcd, uint8_t data)
 #include <iostream>
 void Display:: startDisplay(void * params)
 {
+	//block it until main tells it to start
+	ulTaskNotifyTake( 
+	pdTRUE,          /* Clear the notification value 
+	                    before exiting. */
+		portMAX_DELAY); /* Block indefinitely. */
+	
     std::cout << "started Display" << std::endl;
     //Initialize the display
     Display display;
