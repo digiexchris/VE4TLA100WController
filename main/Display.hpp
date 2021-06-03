@@ -54,8 +54,6 @@ class Display : public Task {
   public:
     Display();
     static void startDisplay(void * state);
-    static const constexpr int STATUS_INDEX = 0;
-    static const constexpr int MODE_INDEX = 1;
   protected:
     static esp_err_t write_lcd_data(const hd44780* lcd,uint8_t data);
     hd44780_t lcd;

@@ -21,7 +21,6 @@ void SafetyMonitor::startSafetyMonitor(void* param) {
 
 	while(1) {
 		
-//TODO notify this from any monitors
 		xTaskNotifyWait( 0x00,      /* Don't clear any notification bits on entry. */
 						ULONG_MAX, /* Reset the notification value to 0 on exit. */
 						NULL, /* Notified value pass out in
@@ -29,6 +28,13 @@ void SafetyMonitor::startSafetyMonitor(void* param) {
 						pdMS_TO_TICKS(100));  /* Block for 100 MS and just continue otherwise incase a notification got missed*/
 
 		stateData = State::getFullState();
+		
+		if (stateData.temp < -8)
+		{
+			error = true;
+			State::setMode(MODE_ERROR);
+			State::setStatus(STATE_ERROR_TEMP_SENSOR);
+		}
 		
 		if(stateData.voltage > VOLTAGE_MAX) {
 			error = true;
@@ -68,6 +74,7 @@ void SafetyMonitor::startSafetyMonitor(void* param) {
 			vTaskSuspend(State::getVoltageInputHandle());
 			vTaskDelay(500 / portTICK_PERIOD_MS);
 			vTaskSuspend(State::getDisplayHandle());
+			vTaskSuspend(State::getTempMonitorHandle());
 			vTaskSuspend(State::getSafetyMonitorHandle());
 			
 		}

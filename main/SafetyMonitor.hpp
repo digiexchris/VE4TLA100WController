@@ -17,7 +17,6 @@ public:
     static const double VOLTAGE_MAX;
 
     static void startSafetyMonitor(void* params);
-    static void startVoltageInput(void*);
 	static void setup(TaskHandle_t dH);
 	
 };

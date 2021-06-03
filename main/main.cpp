@@ -15,22 +15,25 @@ extern "C" void app_main(void)
     ESP_ERROR_CHECK(i2cdev_init());
     xTaskCreate(Display::startDisplay, "Display", 4024, NULL, 5, &displayHandle);
 	
-	
+	printf("Starting temp monitor\n");
+	auto tempMonitorHandle = TempMonitor::getTaskHandle();
+	xTaskCreate(TempMonitor::startTempMonitor, "TempMonitor", 1024, NULL, 5, &tempMonitorHandle);
 	
 	auto safetyMonitorHandle = SafetyMonitor::getTaskHandle();
 	printf("Starting main state control\n");
-	xTaskCreate(SafetyMonitor::startSafetyMonitor, "StateController", 4024, NULL, 5, &safetyMonitorHandle);
+	xTaskCreate(SafetyMonitor::startSafetyMonitor, "StateController", 4024, NULL, 10, &safetyMonitorHandle);
 
 	auto voltageInputHandle = Voltage::getTaskHandle();
 	printf("Starting voltage monitor\n");
 	xTaskCreate(Voltage::startVoltageInput, "VoltageInput", 1024, NULL, 5, &voltageInputHandle);
 	
-	State::setup(displayHandle, voltageInputHandle, safetyMonitorHandle);
+	State::setup(displayHandle, voltageInputHandle, safetyMonitorHandle, tempMonitorHandle);
 	
 	//tell them they can start
 	xTaskNotifyGive(displayHandle);
 	xTaskNotifyGive(voltageInputHandle);
 	xTaskNotifyGive(safetyMonitorHandle);
+	xTaskNotifyGive(tempMonitorHandle);
 	
     printf("TESTING4\n");
 //    vTaskDelete(NULL);

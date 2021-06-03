@@ -15,21 +15,28 @@ StateData State::stateData = {
 TaskHandle_t State::displayHandle = NULL;
 TaskHandle_t State::voltageInputHandle = NULL;
 TaskHandle_t State::safetyMonitorHandle = NULL;
+TaskHandle_t State::tempMonitorHandle = NULL;
 
 StateData State::getFullState() {
 	return stateData;
 }
 
-void State::setup(TaskHandle_t  dH, TaskHandle_t  vH, TaskHandle_t  sMH)
+void State::setup(TaskHandle_t  dH, TaskHandle_t  vH, TaskHandle_t  sMH, TaskHandle_t tmH)
 {
 	displayHandle = dH;
 	voltageInputHandle = vH;
 	safetyMonitorHandle = sMH;
+	tempMonitorHandle = tmH;
 }
 
 TaskHandle_t State::getVoltageInputHandle()
 {
 	return voltageInputHandle;
+}
+
+TaskHandle_t State::getTempMonitorHandle()
+{
+	return tempMonitorHandle;
 }
 
 TaskHandle_t State::getSafetyMonitorHandle()
@@ -45,6 +52,12 @@ TaskHandle_t State::getDisplayHandle()
 void State::setVoltage(double v)
 {
 	stateData.voltage = v;
+	xTaskNotifyGive(displayHandle);
+}
+
+void State::setTemp(double t)
+{
+	stateData.temp = t;
 	xTaskNotifyGive(displayHandle);
 }
 

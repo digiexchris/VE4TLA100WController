@@ -1,6 +1,5 @@
 #ifndef MAIN_H
 #define MAIN_H
-#define INCLUDE_xTaskGetHandle 1
 
 #include <freertos/FreeRTOS.h>
 #include <freertos/task.h>
@@ -12,5 +11,6 @@
 // #include "lpf.hpp"
 #include "Display.hpp"
 #include "Voltage.hpp"
+#include "Temp.hpp"
 
 #endif

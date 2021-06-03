@@ -24,16 +24,17 @@ struct StateData {
 class State {
 protected:
 	static StateData stateData;
-	static TaskHandle_t displayHandle, voltageInputHandle, safetyMonitorHandle;
+	static TaskHandle_t displayHandle, voltageInputHandle, safetyMonitorHandle, tempMonitorHandle;
 public:
 	
 	static StateData getFullState();
 	
-	static TaskHandle_t getVoltageInputHandle(), getSafetyMonitorHandle(), getDisplayHandle();
+	static TaskHandle_t getVoltageInputHandle(), getSafetyMonitorHandle(), getDisplayHandle(), getTempMonitorHandle();
 	static void setVoltage(double v);
 	static void setMode(const char*);
 	static void setStatus(const char*);
+	static void setTemp(double t);
 	
-	static void setup(TaskHandle_t dH, TaskHandle_t vH, TaskHandle_t sMH);
+	static void setup(TaskHandle_t dH, TaskHandle_t vH, TaskHandle_t sMH, TaskHandle_t tmH);
 };
 	
