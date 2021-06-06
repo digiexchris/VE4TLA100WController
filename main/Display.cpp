@@ -10,9 +10,9 @@ static std::map<std::string, std::string> displayMessages {
     {STATE_ERROR_TEMP_SENSOR, "**Temp Sensor**"},
     {STATE_ERROR_CURRENT_HIGH, "***CURRENT HIGH***"},
     {STATE_TRANSMITTING, "Transmitting"},
-    {STATE_RECEIVING, "Receiving"},
-    {STATE_STANDBY, "Standby"},
-    {MODE_AUTOMATIC, "Auto"},
+    {STATE_RECEIVING, "Receiving  "},
+    {STATE_STANDBY, "Standby    "},
+    {MODE_AUTOMATIC, "Auto  "},
     {MODE_MANUAL, "Manual"},
     {MODE_ERROR, "ERROR!!"}
 };

@@ -53,6 +53,10 @@ esp_err_t LPF::setBand(Band band) {
 
 void LPF::band_change_up(void* param)
 {
+	if (disableInterrupts)
+	{
+		return;
+	}
 	ets_printf("Band up\n");
 	Band band = State::setBandUp();
 	setBand(band);
@@ -60,6 +64,10 @@ void LPF::band_change_up(void* param)
 
 void LPF::band_change_down(void* param)
 {
+	if (disableInterrupts)
+	{
+		return;
+	}
 	ets_printf("Band down\n");
 	Band band = State::setBandDown();
 	setBand(band);

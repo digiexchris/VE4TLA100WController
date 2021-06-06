@@ -9,7 +9,6 @@ extern "C" void app_main(void)
 	//RunUnitTestsSelectedInIDE();
     printf("Starting LPF\n");
 	LPF::setup(LPF_3,LPF_2,LPF_1);
-	
 	printf("Starting display\n");
 	auto displayHandle = Display::getTaskHandle();
     ESP_ERROR_CHECK(i2cdev_init());
@@ -37,8 +36,9 @@ extern "C" void app_main(void)
 	
 	gpio_install_isr_service(ESP_INTR_FLAG_DEFAULT);
 	LPF::startButtonISR();
+	State::startButtonISR();
 	
-    printf("TESTING4\n");
+    printf("Done startup\n");
 //    vTaskDelete(NULL);
     //vTaskStartScheduler();
 }

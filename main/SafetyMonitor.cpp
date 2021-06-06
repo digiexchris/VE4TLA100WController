@@ -3,8 +3,6 @@
 
 const double SafetyMonitor::VOLTAGE_MAX = 52.00;
 
-volatile bool disableInterrupts = false;
-
 void SafetyMonitor::startSafetyMonitor(void* param) {
 	
 	//block it until main tells it to start

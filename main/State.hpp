@@ -10,6 +10,7 @@
 #include "pins.hpp"
 enum Band : u_int8_t { b160m, b80m, b60m, b40m, b30m, b20m, b17m, b15m, b12m, b10m, b6m } ;
 
+static bool disableInterrupts = false;
 
 struct StateData {
 	double voltage;
@@ -30,6 +31,7 @@ public:
 	
 	static StateData getFullState();
 	
+	static void toggleStandby(void* param);
 	static void transmit();
 	static void receive();
 	
@@ -42,5 +44,7 @@ public:
 	static Band setBandDown();
 	
 	static void setup(TaskHandle_t dH, TaskHandle_t vH, TaskHandle_t sMH, TaskHandle_t tmH);
+	
+	static void startButtonISR();
 };
 	
