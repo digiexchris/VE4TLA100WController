@@ -10,6 +10,7 @@
 #include "pins.hpp"
 enum Band : unsigned int { b160m, b80m, b60m, b40m, b30m, b20m, b17m, b15m, b12m, b10m, b6m } ;
 
+
 struct StateData {
 	double voltage;
 	double current;
@@ -34,6 +35,8 @@ public:
 	static void setMode(const char*);
 	static void setStatus(const char*);
 	static void setTemp(double t);
+	static Band setBandUp();
+	static Band setBandDown();
 	
 	static void setup(TaskHandle_t dH, TaskHandle_t vH, TaskHandle_t sMH, TaskHandle_t tmH);
 };

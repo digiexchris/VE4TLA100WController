@@ -98,7 +98,6 @@ void Display::writeDynamicOutput() {
 		                        before exiting. */
 		    portMAX_DELAY); /* Block indefinitely. */
 	    
-	    cout << "Starting to refresh the screen" << endl;
         auto state = State::getFullState();
 
         band = BandToString(state.band);
@@ -133,7 +132,6 @@ void Display::writeDynamicOutput() {
             hd44780_puts(&lcd,tl.text.c_str());
             it++;
         }
-	    cout << "Screen refresh complete" << endl;
     }
 }
 

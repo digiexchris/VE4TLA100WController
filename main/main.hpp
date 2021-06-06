@@ -8,7 +8,7 @@
 #include "sdkconfig.h"
 #include "State.hpp"
 #include "SafetyMonitor.hpp"
-// #include "lpf.hpp"
+#include "lpf.hpp"
 #include "Display.hpp"
 #include "Voltage.hpp"
 #include "Temp.hpp"

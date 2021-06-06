@@ -8,13 +8,12 @@ void Voltage::startVoltageInput(void* param) {
 						before exiting. */
 			portMAX_DELAY); /* Block indefinitely. */
 	
-	double voltage = 20.00;
+	double voltage = 50.00;
 	
 	while(1) {
 		
-		cout << "Voltage bump" << endl;
 		//simulating stuff happening
-		voltage = voltage + 0.01;
+		voltage = voltage;
 
 		//double v = gpio_read(voltage_pin) or whatever
 

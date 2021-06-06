@@ -8,7 +8,7 @@ extern "C" void app_main(void)
 {
 	//RunUnitTestsSelectedInIDE();
     printf("Starting LPF\n");
-	//LPF lpf(LPF_3,LPF_2,LPF_1);
+	LPF::setup(LPF_3,LPF_2,LPF_1);
 	
 	printf("Starting display\n");
 	auto displayHandle = Display::getTaskHandle();
@@ -34,6 +34,9 @@ extern "C" void app_main(void)
 	xTaskNotifyGive(voltageInputHandle);
 	xTaskNotifyGive(safetyMonitorHandle);
 	xTaskNotifyGive(tempMonitorHandle);
+	
+	gpio_install_isr_service(ESP_INTR_FLAG_DEFAULT);
+	LPF::startButtonISR();
 	
     printf("TESTING4\n");
 //    vTaskDelete(NULL);

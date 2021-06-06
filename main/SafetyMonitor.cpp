@@ -37,6 +37,7 @@ void SafetyMonitor::startSafetyMonitor(void* param) {
 		}
 		
 		if(stateData.voltage > VOLTAGE_MAX) {
+			//TODO: turn off the high voltage relay
 			error = true;
 			State::setMode(MODE_ERROR);
 			State::setStatus(STATE_ERROR_VOLTS_HIGH);
