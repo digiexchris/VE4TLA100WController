@@ -4,7 +4,7 @@
 #include <cmath>
 #include <sstream>
 
-enum Band : unsigned int;
+enum Band : u_int8_t;
 
 using namespace std;
 string leftPadDoubleToStringWithPrecision(int width, double number,  int precision);

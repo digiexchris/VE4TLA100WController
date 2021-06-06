@@ -23,16 +23,12 @@ void LPF::setup(gpio_num_t pin1, gpio_num_t pin2, gpio_num_t pin3) {
     lpfPins[0] = pin1;
     lpfPins[1] = pin2;
     lpfPins[2] = pin3;
-
-	//    unsigned char outputPins = pin1 | pin2 | pin3;
-	//    ioconf.intr_type = GPIO_INTR_DISABLE;
-	//    ioconf.mode = GPIO_MODE_OUTPUT;
-	//    ioconf.pin_bit_mask = outputPins;
-	//    //disable pull-down mode
-	//    ioconf.pull_down_en = GPIO_PULLDOWN_DISABLE;
-	//    //disable pull-up mode
-	//    ioconf.pull_up_en = GPIO_PULLUP_DISABLE;
-	//    gpio_config(&ioconf);
+	
+	gpio_set_direction(pin1, GPIO_MODE_OUTPUT);
+	gpio_set_direction(pin2, GPIO_MODE_OUTPUT);
+	gpio_set_direction(pin3, GPIO_MODE_OUTPUT);
+	
+	setBand(Band::b160m);
 	
 	gpio_set_direction(BUTTON_UP, GPIO_MODE_INPUT);
 	gpio_set_direction(BUTTON_DOWN, GPIO_MODE_INPUT);
@@ -59,14 +55,14 @@ void LPF::band_change_up(void* param)
 {
 	ets_printf("Band up\n");
 	Band band = State::setBandUp();
-//	setBand(band);
+	setBand(band);
 }
 
 void LPF::band_change_down(void* param)
 {
 	ets_printf("Band down\n");
 	Band band = State::setBandDown();
-//	setBand(band);
+	setBand(band);
 }
 
 void LPF::startButtonISR()

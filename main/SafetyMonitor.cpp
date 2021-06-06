@@ -57,8 +57,8 @@ void SafetyMonitor::startSafetyMonitor(void* param) {
 
 		if(error) {
 			//turn the amp off
-//			 gpio_set_level(PTT_OUTPUT,0);
-//			 gpio_set_level(BIAS_DISABLE,1);
+			 gpio_set_level(PTT_OUTPUT,0);
+			 gpio_set_level(BIAS_DISABLE,1);
 
 			//make sure interrupts or other tasks can't turn the amp back on
 			disableInterrupts = true;

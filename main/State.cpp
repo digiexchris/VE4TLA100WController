@@ -53,13 +53,37 @@ Band operator--(Band& b, int) // postfix operator
 	return result;
 }
 
+void State::transmit()
+{
+	if (stateData.status == STATE_STANDBY)
+	{
+		return;
+	}
+	gpio_set_level(PTT_OUTPUT, 1);
+	gpio_set_level(BIAS_DISABLE, 0);
+}
+
+void State::receive()
+{
+	gpio_set_level(BIAS_DISABLE, 1);
+	gpio_set_level(PTT_OUTPUT, 0);
+	
+	//todo
+	//save to nvs which band was used if it differs from what was previously saved. Maybe fork this off into a blocked task
+	//this is a good time to save it because now everything is all in a safe stable state and we can take the time
+}
+
 StateData State::getFullState() {
 	return stateData;
 }
 
 Band State::setBandUp()
 {
-	//todo guard on transmitting
+	if(stateData.status == STATE_TRANSMITTING)
+	{
+		return stateData.band;
+	}
+	
 	stateData.band++;
 	xTaskNotifyGive(displayHandle);
 	return stateData.band;
@@ -67,6 +91,11 @@ Band State::setBandUp()
 
 Band State::setBandDown()
 {
+	if (stateData.status == STATE_TRANSMITTING)
+	{
+		return stateData.band;
+	}
+	
 	stateData.band--;
 	xTaskNotifyGive(displayHandle);
 	return stateData.band;
@@ -78,6 +107,13 @@ void State::setup(TaskHandle_t  dH, TaskHandle_t  vH, TaskHandle_t  sMH, TaskHan
 	voltageInputHandle = vH;
 	safetyMonitorHandle = sMH;
 	tempMonitorHandle = tmH;
+	
+	gpio_set_direction(PTT_INPUT, GPIO_MODE_INPUT);
+	gpio_set_pull_mode(PTT_INPUT, GPIO_PULLUP_ONLY);
+	gpio_set_direction(PTT_OUTPUT, GPIO_MODE_OUTPUT);
+	gpio_set_level(PTT_OUTPUT, 0);
+	gpio_set_direction(BIAS_DISABLE, GPIO_MODE_OUTPUT);
+	gpio_set_level(PTT_OUTPUT, 1);
 }
 
 TaskHandle_t State::getVoltageInputHandle()

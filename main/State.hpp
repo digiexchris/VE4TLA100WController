@@ -8,7 +8,7 @@
 #include "messages.hpp"
 
 #include "pins.hpp"
-enum Band : unsigned int { b160m, b80m, b60m, b40m, b30m, b20m, b17m, b15m, b12m, b10m, b6m } ;
+enum Band : u_int8_t { b160m, b80m, b60m, b40m, b30m, b20m, b17m, b15m, b12m, b10m, b6m } ;
 
 
 struct StateData {
@@ -29,6 +29,9 @@ protected:
 public:
 	
 	static StateData getFullState();
+	
+	static void transmit();
+	static void receive();
 	
 	static TaskHandle_t getVoltageInputHandle(), getSafetyMonitorHandle(), getDisplayHandle(), getTempMonitorHandle();
 	static void setVoltage(double v);
