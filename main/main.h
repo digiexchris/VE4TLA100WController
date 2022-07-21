@@ -8,6 +8,6 @@
 #include "sdkconfig.h"
 #include "StateController.h"
 // #include "lpf.h"
-#include "I2C20x4Display.h"
+#include "Display.h"
 
 #endif

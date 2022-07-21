@@ -1,3 +1,3 @@
 
-idf_component_register(SRCS "main.cpp"
-                    INCLUDE_DIRS "." "../includes" REQUIRES state lpf I2C20x4Display)
+idf_component_register(SRCS "catch.cpp" "main.cpp"
+                    INCLUDE_DIRS "." "../includes" REQUIRES state lpf Display)

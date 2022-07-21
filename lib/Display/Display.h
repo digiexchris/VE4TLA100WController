@@ -14,6 +14,7 @@
 #include <iomanip>
 #include <freertos/FreeRTOS.h>
 #include <freertos/task.h>
+#include <cmath>
 using namespace std; 
 
 
@@ -42,7 +43,7 @@ struct textLocator {
 static TaskHandle_t displayHandle = NULL;;
 
 static std::map<int, textLocator>background {
-    {BACKGROUND_BAND_SYMBOL,textLocator{6,0, "m"}},
+    {BACKGROUND_BAND_SYMBOL,textLocator{4,0, "m"}},
     {BACKGROUND_WATT_SYMBOL,textLocator{6,1, "W"}},
     {BACKGROUND_SWR_SYMBOL,textLocator{12,1, "SWR"}},
     {BACKGROUND_AMP_SYMBOL,textLocator{6,2, "A"}},
@@ -50,9 +51,9 @@ static std::map<int, textLocator>background {
     {BACKGROUND_TEMP_SYMBOL,textLocator{19,3, "C"}}
 };
 
-class I2C20x4Display {
+class Display {
   public:
-    I2C20x4Display();
+    Display();
     static void startDisplay(void * state);
     static const constexpr int STATUS_INDEX = 0;
     static const constexpr int MODE_INDEX = 1;
@@ -62,6 +63,7 @@ class I2C20x4Display {
   private:
     void writeDynamicOutput();
     std::string rightAlignWidth(int columns, string input);
+    double roundUp(double value, int decimal_places);
 };
 
 #endif
